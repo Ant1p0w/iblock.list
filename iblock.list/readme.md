@@ -1,4 +1,4 @@
-# Список элементов инфоблока на D7
+# Список элементов и категорий инфоблока на D7
 
 Пример вызова:
 
@@ -9,7 +9,7 @@ $APPLICATION->IncludeComponent(
     [
         "CACHE_TIME"          => "86000",
         "CACHE_TYPE"          => "A",
-        "FIELD_CODE"          => ["ID", "CODE", "XML_ID", "NAME", "SORT", ""],
+        "FIELD_CODE"          => ["ID", "CODE", "IBLOCK_SECTION_ID", "XML_ID", "NAME", "SORT", ""],
         "IBLOCK_ID"           => "17",
         "PROPERTY_SINGLE_ID"  => [1, 2, 3, 4],
         "SORT_BY"             => "ID",

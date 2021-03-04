@@ -75,8 +75,22 @@ class IblockList extends \CBitrixComponent
     protected function getResult()
     {
         $select = $this->arParams['FIELD_CODE'];
-        $runtime = [];
 
+        //Категории
+        if (in_array('IBLOCK_SECTION_ID', $this->arParams['FIELD_CODE'])) {
+            $runtime = [
+                'SECTION' => [
+                    'data_type' => "Bitrix\Iblock\SectionTable",
+                    'reference' => [
+                        '=this.IBLOCK_ID'         => 'ref.IBLOCK_ID',
+                        '=this.IBLOCK_SECTION_ID' => 'ref.ID',
+                    ],
+                ]
+            ];
+            $select = array_merge($select, ['SECTION.NAME', 'SECTION.ID']);
+        }
+
+        //Свойства
         if (!empty($this->arParams["PROPERTY_SINGLE_ID"])) {
             $arSingleProp = [];
 
@@ -92,23 +106,22 @@ class IblockList extends \CBitrixComponent
                 ]
             );
 
-            $runtime = [
-                'PROPERTY_SINGLE' => [
-                    'data_type' => $entityPropsSingle->getDataClass(),
-                    'reference' => [
-                        '=this.ID' => 'ref.IBLOCK_ELEMENT_ID'
-                    ],
-                    'join_type' => 'inner'
+            $runtime['PROPERTY_SINGLE'] = [
+                'data_type' => $entityPropsSingle->getDataClass(),
+                'reference' => [
+                    '=this.ID' => 'ref.IBLOCK_ELEMENT_ID'
                 ],
+                'join_type' => 'inner'
             ];
 
             $select = array_merge($select, ['PROPERTY_SINGLE.*']);
         }
 
+        //Список элементов
         $dbItems = \Bitrix\Iblock\ElementTable::getList([
             'order'         => [$this->arParams['SORT_BY'] => $this->arParams['SORT_ORDER']],
             'select'        => $select,
-            'filter'        => ['IBLOCK_ID' => $this->arParams['IBLOCK_ID']],
+            'filter'        => ['IBLOCK_ID' => $this->arParams['IBLOCK_ID'], "!IBLOCK_SECTION_ID" => false],
             'group'         => [],
             'limit'         => $this->arParams['ELEMENT_COUNT'],
             'offset'        => 0,
